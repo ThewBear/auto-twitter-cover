@@ -8,18 +8,12 @@ docker build auto-twitter-cover -t auto-twitter-cover
 
 ## Set env
 
-Create `env` file
-
-```env
+```sh
 export TWITTER_CONSUMER_KEY=
 export TWITTER_CONSUMER_SECRET=
 export TWITTER_ACCESS_TOKEN=
 export TWITTER_ACCESS_TOKEN_SECRET=
 export UNSPLASH_ACCESS_KEY=
-```
-
-```sh
-source env
 ```
 
 ## Start container
