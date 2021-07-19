@@ -25,13 +25,22 @@ async function sunApi(date = "today") {
 }
 
 async function unsplashApi() {
-  const { urls } = await got(`https://api.unsplash.com/photos/random`, {
+  const {
+    urls: { raw: finalUrl },
+  } = await got(`https://api.unsplash.com/photos/random`, {
     headers: {
       "Accept-Version": "v1",
       Authorization: `Client-ID ${env.UNSPLASH_ACCESS_KEY}`,
     },
   }).json()
-  return urls.raw
+
+  // const {
+  //   headers: { location: finalUrl },
+  // } = await got(`https://source.unsplash.com/1500x500`, {
+  //   followRedirect: false,
+  // })
+
+  return finalUrl
 }
 
 async function nasaApi() {
