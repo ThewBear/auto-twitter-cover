@@ -89,10 +89,15 @@ async function main() {
   const isSunset = Math.abs(sunset.getTime() - Date.now()) < interval / 2
 
   if (isSunrise || isSunset) {
-    const url = await (isSunrise ? unsplashApi() : nasaApi())
-    const base64Img = await downloadImage(url)
-    twitterApi(base64Img)
-    console.log(`${Date()}:${url}`)
+    try {
+      const url = await (isSunrise ? unsplashApi() : nasaApi())
+      const base64Img = await downloadImage(url)
+      twitterApi(base64Img)
+      console.log(`${Date()}:${url}`)
+    } catch (error) {
+      console.error(error)
+      return main()
+    }
   }
 }
 
