@@ -15,12 +15,18 @@ const oauth = OAuth({
     crypto.createHmac("sha1", key).update(baseString).digest("base64"),
 })
 
-async function sunApi(date = "today") {
+async function sunApi() {
+  const today = new Date()
+  const offsetHours = (today.getTimezoneOffset() / 60)
+  const bkkTime = 7
+  const date = today.getHours() + bkkTime - offsetHours >= 24 ? "tomorrow" : "today"
+
   const {
     results: { sunrise, sunset },
   } = await got(
     `https://api.sunrise-sunset.org/json?lat=13.7563&lng=100.5018&date=${date}&formatted=0`
   ).json()
+
   return { sunrise: new Date(sunrise), sunset: new Date(sunset) }
 }
 
