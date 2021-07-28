@@ -89,6 +89,19 @@ async function twitterApi(base64Img) {
   });
 }
 
+async function setCover(apiFunc) {
+  try {
+    const url = await apiFunc();
+    const base64Img = await downloadImage(url);
+    await twitterApi(base64Img);
+    console.log(`${Date()}:${url}`);
+    return url;
+  } catch (error) {
+    console.error(error);
+    return setCover(apiFunc);
+  }
+}
+
 async function main() {
   const { sunrise, sunset } = await sunApi();
 
@@ -96,15 +109,7 @@ async function main() {
   const isSunset = Math.abs(sunset.getTime() - Date.now()) < interval / 2;
 
   if (isSunrise || isSunset) {
-    try {
-      const url = await (isSunrise ? unsplashApi() : nasaApi());
-      const base64Img = await downloadImage(url);
-      await twitterApi(base64Img);
-      console.log(`${Date()}:${url}`);
-    } catch (error) {
-      console.error(error);
-      return main();
-    }
+    return setCover(isSunrise ? unsplashApi : nasaApi);
   }
 }
 
