@@ -32,9 +32,10 @@ async function sunApi() {
 }
 
 async function unsplashApi() {
+  // Nature topic
   const {
     urls: { raw: finalUrl },
-  } = await got(`https://api.unsplash.com/photos/random`, {
+  } = await got(`https://api.unsplash.com/photos/random?topics=6sMVjTLSkeQ,`, {
     headers: {
       "Accept-Version": "v1",
       Authorization: `Client-ID ${env.UNSPLASH_ACCESS_KEY}`,
