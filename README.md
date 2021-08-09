@@ -3,7 +3,7 @@
 ## Build docker image
 
 ```sh
-docker build auto-twitter-cover -t auto-twitter-cover
+docker build https://github.com/ThewBear/auto-twitter-cover.git#main -t auto-twitter-cover:main
 ```
 
 ## Set env
@@ -16,12 +16,20 @@ export TWITTER_ACCESS_TOKEN_SECRET=
 export UNSPLASH_ACCESS_KEY=
 ```
 
-## Start container
+## Usage
+
+Start
 
 ```sh
-docker run -it --rm --name auto-twitter-cover \
+docker run -d --restart always --name auto-twitter-cover \
     -e TWITTER_CONSUMER_KEY -e TWITTER_CONSUMER_SECRET \
     -e TWITTER_ACCESS_TOKEN -e TWITTER_ACCESS_TOKEN_SECRET \
     -e UNSPLASH_ACCESS_KEY \
-    auto-twitter-cover
+    auto-twitter-cover:main
+```
+
+Stop
+
+```sh
+docker stop auto-twitter-cover && docker rm auto-twitter-cover
 ```
