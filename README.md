@@ -3,7 +3,7 @@
 ## Build docker image
 
 ```sh
-docker build https://github.com/ThewBear/auto-twitter-cover.git#main -t auto-twitter-cover:main
+docker build https://github.com/ThewApp/auto-twitter-cover.git#main -t auto-twitter-cover:main
 ```
 
 ## Set env
