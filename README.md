@@ -1,5 +1,7 @@
 # auto-twitter-cover
 
+Changing Twitter cover every sunrise and sunset with images from Unsplash and Nasa respectively.
+
 ## Build docker image
 
 ```sh
