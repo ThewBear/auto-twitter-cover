@@ -5,13 +5,9 @@
 
 Changing Twitter cover every sunrise and sunset with images from Unsplash and Nasa respectively.
 
-## Build docker image
+## Usage
 
-```sh
-docker build https://github.com/ThewApp/auto-twitter-cover.git#main -t auto-twitter-cover:main
-```
-
-## Set env
+### Set env
 
 ```sh
 export TWITTER_CONSUMER_KEY=""
@@ -21,9 +17,23 @@ export TWITTER_ACCESS_TOKEN_SECRET=""
 export UNSPLASH_ACCESS_KEY=""
 ```
 
-## Usage
+### Start
 
-Start
+1. Use online image
+
+```sh
+docker run -d --restart always --name auto-twitter-cover \
+    -e TWITTER_CONSUMER_KEY -e TWITTER_CONSUMER_SECRET \
+    -e TWITTER_ACCESS_TOKEN -e TWITTER_ACCESS_TOKEN_SECRET \
+    -e UNSPLASH_ACCESS_KEY \
+    ghcr.io/thewapp/auto-twitter-cover:main
+```
+
+2. Use local image
+
+```sh
+docker build https://github.com/ThewApp/auto-twitter-cover.git#main -t auto-twitter-cover:main
+```
 
 ```sh
 docker run -d --restart always --name auto-twitter-cover \
@@ -33,7 +43,7 @@ docker run -d --restart always --name auto-twitter-cover \
     auto-twitter-cover:main
 ```
 
-Stop
+### Stop
 
 ```sh
 docker stop auto-twitter-cover && docker rm auto-twitter-cover
