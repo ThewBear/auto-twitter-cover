@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math"
 	"net/http"
@@ -58,8 +58,8 @@ func sunApi() sunInfo {
 	if err != nil {
 		log.Println(err)
 	}
-
-	body, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 	}
@@ -80,15 +80,27 @@ func sunApi() sunInfo {
 	}
 }
 
-func setCover(base64Img string) {
+func setCover(base64Img string) (string, error) {
 	path := "https://api.twitter.com/1.1/account/update_profile_banner.json"
 	httpClient := oauthConfig.Client(oauth1.NoContext, oauthToken)
-	_, err := httpClient.PostForm(path, url.Values{
+	resp, err := httpClient.PostForm(path, url.Values{
 		"banner": {base64Img},
 	})
 	if err != nil {
-		log.Println(err)
+		return "", err
 	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	bodyString := string(body)
+	if err != nil {
+		return "", err
+	} else if resp.StatusCode > 202 || resp.StatusCode < 200 {
+		return "", fmt.Errorf("%s", bodyString)
+	}
+	if len(bodyString) == 0 {
+		return "setCover", nil
+	}
+	return bodyString, nil
 }
 
 func unsplashApi() (string, error) {
@@ -106,7 +118,8 @@ func unsplashApi() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -125,7 +138,8 @@ func nasaApi() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -155,12 +169,43 @@ func downloadImage(url string) string {
 		log.Println(err)
 		return ""
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 		return ""
 	}
 	return base64.StdEncoding.EncodeToString(body)
+}
+
+func triggered(isSunrise bool) {
+	var url string
+	var err error
+	if isSunrise {
+		log.Println("Triggered: sunrise")
+		url, err = unsplashApi()
+	} else {
+		log.Println("Triggered: sunset")
+		url, err = nasaApi()
+	}
+	if err != nil {
+		log.Println(err)
+		log.Println("Will retry...")
+		time.Sleep(interval * time.Millisecond)
+		triggered(isSunrise)
+		return
+	}
+	var resp string
+	resp, err = setCover(downloadImage(url))
+	if err != nil {
+		log.Println(err)
+		log.Println("Will retry...")
+		time.Sleep(interval * time.Millisecond)
+		triggered(isSunrise)
+		return
+	} else {
+		log.Println(resp)
+	}
 }
 
 func run() {
@@ -170,20 +215,7 @@ func run() {
 	isSunset := math.Abs(float64(sun.Set.Sub(now).Milliseconds())) < interval/2
 
 	if isSunrise || isSunset {
-		var url string
-		var err error
-		if isSunrise {
-			log.Println("Triggered: sunrise")
-			url, err = unsplashApi()
-		} else {
-			log.Println("Triggered: sunset")
-			url, err = nasaApi()
-		}
-		if err != nil {
-			log.Println(err)
-		} else {
-			setCover(downloadImage(url))
-		}
+		triggered(isSunrise)
 	}
 }
 
