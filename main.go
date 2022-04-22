@@ -95,7 +95,7 @@ func setCover(base64Img string) (string, error) {
 	if err != nil {
 		return "", err
 	} else if resp.StatusCode > 202 || resp.StatusCode < 200 {
-		return "", fmt.Errorf("%s", bodyString)
+		return "", fmt.Errorf("%d %s", resp.StatusCode, bodyString)
 	}
 	if len(bodyString) == 0 {
 		return "setCover", nil
