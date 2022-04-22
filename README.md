@@ -22,6 +22,10 @@ export UNSPLASH_ACCESS_KEY=""
 1. Use online image
 
 ```sh
+docker pull ghcr.io/thewapp/auto-twitter-cover:main
+```
+
+```sh
 docker run -d --restart always --name auto-twitter-cover \
     -e TWITTER_CONSUMER_KEY -e TWITTER_CONSUMER_SECRET \
     -e TWITTER_ACCESS_TOKEN -e TWITTER_ACCESS_TOKEN_SECRET \
