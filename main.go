@@ -95,12 +95,9 @@ func setCover(base64Img string) (string, error) {
 	if err != nil {
 		return "", err
 	} else if resp.StatusCode > 202 || resp.StatusCode < 200 {
-		return "", fmt.Errorf("%d %s", resp.StatusCode, bodyString)
+		return "", fmt.Errorf("%d:%s", resp.StatusCode, bodyString)
 	}
-	if len(bodyString) == 0 {
-		return "setCover", nil
-	}
-	return bodyString, nil
+	return fmt.Sprintf("%d:%s", resp.StatusCode, bodyString), nil
 }
 
 func unsplashApi() (string, error) {
