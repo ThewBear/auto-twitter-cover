@@ -118,7 +118,7 @@ func setCover(base64Img string) (string, error) {
 
 func unsplashApi() (string, error) {
 	type unsplashResponse struct {
-		Urls struct{ Raw string }
+		Urls struct{ Full string }
 	}
 	unsplashClient := http.Client{}
 	req, err := http.NewRequest(http.MethodGet, "https://api.unsplash.com/photos/random?topics=6sMVjTLSkeQ", nil)
@@ -138,7 +138,7 @@ func unsplashApi() (string, error) {
 	}
 	var parsed unsplashResponse
 	json.Unmarshal(body, &parsed)
-	return parsed.Urls.Raw, nil
+	return fmt.Sprintf("%s&w=2000", parsed.Urls.Full), nil
 }
 
 func nasaApi() (string, error) {
