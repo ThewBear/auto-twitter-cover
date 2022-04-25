@@ -56,23 +56,39 @@ func sunApi() sunInfo {
 
 	resp, err := http.Get(fmt.Sprintf("https://api.sunrise-sunset.org/json?lat=13.7563&lng=100.5018&date=%s&formatted=0", currentDate))
 	if err != nil {
-		log.Println(err)
+		log.Println("sunApi get", err)
+		return sunInfo{
+			Rise: time.UnixMilli(0),
+			Set:  time.UnixMilli(0),
+		}
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err)
+		log.Println("sunApi read", err)
+		return sunInfo{
+			Rise: time.UnixMilli(0),
+			Set:  time.UnixMilli(0),
+		}
 	}
 	var parsed sunResponse
 	json.Unmarshal(body, &parsed)
 
 	rise, err := time.Parse(time.RFC3339, parsed.Results.Sunrise)
 	if err != nil {
-		log.Println(err)
+		log.Println("sunApi parse sunrise", err)
+		return sunInfo{
+			Rise: time.UnixMilli(0),
+			Set:  time.UnixMilli(0),
+		}
 	}
 	set, err := time.Parse(time.RFC3339, parsed.Results.Sunset)
 	if err != nil {
-		log.Println(err)
+		log.Println("sunApi parse sunset", err)
+		return sunInfo{
+			Rise: time.UnixMilli(0),
+			Set:  time.UnixMilli(0),
+		}
 	}
 	return sunInfo{
 		Rise: rise,
